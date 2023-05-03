@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/event">
+        <file>eventindicator.png</file>
+    </qresource>
+</RCC>

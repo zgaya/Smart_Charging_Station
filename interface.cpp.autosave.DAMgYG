@@ -1,0 +1,90 @@
+#include "interface.h"
+#include "ui_interface.h"
+#include "employe.h"
+#include "QMessageBox"
+#include <QMainWindow>
+interface::interface(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::interface)
+{
+    ui->setupUi(this);
+    ui->gestion_employe->setCurrentIndex(0);
+    ui->lineEdit_CIN->setValidator(new QIntValidator(0, 99999999, this));
+}
+
+interface::~interface()
+{
+    delete ui;
+}
+
+void interface::on_pb_ajouter_clicked()
+{
+    int CIN=ui->lineEdit_CIN->text().toInt();
+    QString Nom=ui->lineEdit_Nom->text();
+    QString Prenom=ui->lineEdit_Prenom->text();
+    QString Phone=ui->lineEdit_Phone->text();
+    QString Email=ui->lineEdit_Email->text();
+    QString Function=ui->comboBox_Function->currentText();
+    QString Mdp=ui->lineEdit_Mdp->text();
+    employe E(CIN,Nom,Prenom,Phone,Email,Function,Mdp);
+    bool test=E.ajouter();
+        if(test){
+            QMessageBox::information(nullptr, QObject::tr("Ajouter un employé"),
+                        QObject::tr("ajout effectué.\n"
+                                    "Click Cancel to exit."), QMessageBox::Cancel);
+               ui->tab_employee->setModel(E.afficher());
+
+        }
+        else
+            QMessageBox::critical(nullptr, QObject::tr("Ajouter un employé"),
+                        QObject::tr("ajout non effectué.\n"
+                                    "Click Cancel to exit."), QMessageBox::Cancel);
+
+}
+
+void interface::on_pb_supprimer_clicked()
+{
+   employe E1;
+   E1.setCIN(ui->lineEdit_Supp->text().toInt());
+   bool test=E1.supprimer(E1.getCIN());
+   if(test){
+       QMessageBox::information(nullptr, QObject::tr("Supprimer un employé"),
+                   QObject::tr("Suppresion effectué.\n"
+                               "Click Cancel to exit."), QMessageBox::Cancel);
+       ui->lineEdit_Supp->setText("");
+       ui->tab_employee->setModel(E1.afficher());
+
+   }
+   else
+       QMessageBox::critical(nullptr, QObject::tr("not ok"),
+                   QObject::tr("Suppresion non effectué.\n"
+                               "Click Cancel to exit."), QMessageBox::Cancel);
+    
+}
+
+void interface::on_pb_modifier_clicked()
+{
+           int CIN=ui->lineEdit_CIN->text().toInt();
+           QString Nom=ui->lineEdit_Nom->text();
+           QString Prenom=ui->lineEdit_Prenom->text();
+           QString Phone=ui->lineEdit_Phone->text();
+           QString Email=ui->lineEdit_Email->text();
+           QString Function=ui->comboBox_Function->currentText();
+           QString Mdp=ui->lineEdit_Mdp->text();
+
+      employe E(CIN,Nom,Prenom,Phone,Email,Function,Mdp);
+      bool test=E.modifier_Employee();
+      if(test)
+        {
+            QMessageBox::information(nullptr, QObject::tr("Modifier un employé"),
+                               QObject::tr("employé modifié.\n"
+                                           "Click Cancel to exit."), QMessageBox::Cancel);
+            ui->tab_employee->setModel(E.afficher());
+
+        }
+        else{
+            QMessageBox::critical(nullptr, QObject::tr("Modifier un employé"),
+                               QObject::tr("Employe non modifié.\n"
+                                           "Click Cancel to exit."), QMessageBox::Cancel);
+        }
+}
